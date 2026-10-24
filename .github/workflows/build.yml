@@ -3,6 +3,7 @@ name: Build Android APK
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -16,15 +17,11 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install Buildozer
-      run: |
-        pip install --upgrade pip
-        pip install --user buildozer kivy
+    - name: Install Dependencies
+      run: pip install --upgrade pip buildozer cython==0.29.36 kivy
 
     - name: Run Buildozer
-      run: |
-        buildozer init
-        buildozer -v android debug
+      run: buildozer -v android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v3
