@@ -3,38 +3,31 @@ name: Build Android APK
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
-    - name: Install System Dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y openjdk-17-jdk unzip git
-
-    - name: Install Python Dependencies
+    - name: Install Buildozer
       run: |
         pip install --upgrade pip
-        pip install buildozer cython==0.29.36 kivy
+        pip install --user buildozer kivy
 
-    - name: Initialize and Build
+    - name: Run Buildozer
       run: |
-        yes | buildozer init
+        buildozer init
         buildozer -v android debug
 
-    - name: Upload APK Artifact
+    - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
-        name: app-release
+        name: CyberShield-APK
         path: bin/*.apk
