@@ -10,30 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/python-version@v4
+      uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
-    - name: Install dependencies
+    - name: Install Buildozer and dependencies
       run: |
         sudo apt update
-        sudo apt install -y build-essential libffi-dev python3-dev zip unzip openjdk-17-jdk
+        sudo apt install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
         pip install --upgrade pip
-        pip install buildozer cython
+        pip install --user Cython==0.29.36 buildozer kivy
 
-    - name: Build APK with Buildozer
+    - name: Run Buildozer
       run: |
         buildozer init
-        sed -i 's/requirements = python3,kivy/requirements = python3/' buildozer.spec
         buildozer -v android debug
 
-    - name: Upload APK artifact
+    - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
-        name: CyberShield-APK
+        name: package
         path: bin/*.apk
 concurrency: 
