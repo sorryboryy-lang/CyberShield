@@ -18,10 +18,19 @@ jobs:
         python-version: '3.10'
 
     - name: Install Dependencies
-      run: pip install --upgrade pip buildozer cython==0.29.36 kivy
+      run: |
+        sudo apt update
+        sudo apt install -y openjdk-17-jdk unzip
+        pip install --upgrade pip
+        pip install buildozer cython==0.29.36 kivy
 
-    - name: Run Buildozer
-      run: buildozer -v android debug
+    - name: Build with Buildozer
+      run: |
+        buildozer init
+        sed -i 's/#title = My Application/title = CyberShield/' buildozer.spec
+        sed -i 's/#package.name = myapp/package.name = cybershield/' buildozer.spec
+        sed -i 's/#package.domain = org.test/package.domain = org.cybershield/' buildozer.spec
+        buildozer -v android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v3
